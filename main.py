@@ -41,7 +41,9 @@ OUT: str = "Wins: Player"
 
 
 def check_regex(_input: str) -> bool:
-    return bool(re.fullmatch(pattern=MOVE_REGEX, string=_input)[0])
+    match: re.Match[str] = re.fullmatch(pattern=MOVE_REGEX, string=_input)
+    if match:
+        return bool(match[0])
 
 
 def check_bounds(x: int, y: int) -> bool:
@@ -126,7 +128,6 @@ def print_field(field: list[list[str | None]]) -> None:
 
 
 def main(field_width: int, field_height: int) -> None:
-    game_over: bool = False
     current_player_has_won: bool = False
     field: list[list[str]] = [[EMPTY for _ in range(field_width)]
                               for _ in range(field_height)]
@@ -137,19 +138,16 @@ def main(field_width: int, field_height: int) -> None:
     print(EXPLANATION_MESSAGE)
     print_field(field=field)
 
-    while not game_over:
+    while not current_player_has_won:
         request_move_and_change_field(player_tag=current_player,
                                       field=field)
         print_field(field=field)
 
         current_player_has_won: bool = check_game_over(player_tag=current_player, field=field)
-        other_player_has_won: bool = check_game_over(player_tag=other_player, field=field)
-        game_over = current_player_has_won or other_player_has_won
-
         current_player, other_player = other_player, current_player
 
     current_player, other_player = other_player, current_player
-    print(f"{OUT} {current_player if current_player_has_won else other_player}")
+    print(f"{OUT} {current_player}")
 
 
 if __name__ == "__main__":
